@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+</head>
+
+<body style="font-family:Arial;background:#f5f7fb;padding:30px">
+
+<h2>Zein eSchool Agenda Dashboard</h2>
+
+<p>User:
+<span id="user"></span>
+</p>
+
+<p>Level:
+<span id="level"></span>
+</p>
+
+<h3>Homework</h3>
+
+<div id="homework"></div>
+
+<script>
+
+if(!localStorage.getItem("username")){
+window.location="index.html";
+}
+
+document.getElementById("user").innerText=
+localStorage.getItem("username");
+
+document.getElementById("level").innerText=
+localStorage.getItem("level")||"";
+
+function getDB(){
+return JSON.parse(localStorage.getItem("zeinDB")||"{}");
+}
+
+function loadHomework(){
+
+let db=getDB();
+let html="";
+
+db.homework?.forEach(h=>{
+
+html+=`
+<div style="border:1px solid #ddd;padding:15px;margin:10px;border-radius:10px">
+<p>Teacher: ${h.teacher||"Unknown"}</p>
+<p>Type: ${h.type||""}</p>
+<p>${h.details||""}</p>
+</div>
+`;
+
+});
+
+document.getElementById("homework").innerHTML=html;
+
+}
+
+loadHomework();
+
+</script>
+
+</body>
+</html>
