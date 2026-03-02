@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Zein eSchool Agenda</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f5f7fb;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.box{
+background:white;
+padding:40px;
+border-radius:20px;
+width:350px;
+box-shadow:0 0 20px rgba(0,0,0,0.1);
+}
+
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border-radius:10px;
+border:1px solid #ddd;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#4a6cf7;
+color:white;
+border:none;
+cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Zein eSchool Agenda</h2>
+
+Name
+<input id="username">
+
+Password
+<input type="password" id="password">
+
+<button onclick="login()">Login</button>
+
+</div>
+
+<script>
+
+function getDB(){
+return JSON.parse(localStorage.getItem("zeinDB")||"{}");
+}
+
+function login(){
+
+let username=usernameInput.value;
+let password=passwordInput.value;
+
+/* Role detection */
+
+let role="";
+
+if(password.startsWith("0")||password.startsWith("1"))
+role="teacher";
+
+else if(password.startsWith("4")||password.startsWith("5"))
+role="student";
+
+else if(password.startsWith("8")||password.startsWith("9"))
+role="admin";
+
+else{
+alert("Invalid password");
+return;
+}
+
+/* Database */
+
+let db=getDB();
+
+if(!db.users){
+
+db.users=[
+{username:"Alice",password:"012345",role:"teacher",level:"O"},
+{username:"Bob",password:"412345",role:"student",level:"A"},
+{username:"Owner",password:"812345",role:"admin"}
+];
+
+localStorage.setItem("zeinDB",JSON.stringify(db));
+}
+
+/* Validation */
+
+let user=db.users.find(u=>
+u.username===username &&
+u.password===password &&
+u.role===role
+);
+
+if(!user){
+alert("Login failed");
+return;
+}
+
+/* Session */
+
+localStorage.setItem("username",username);
+localStorage.setItem("role",role);
+localStorage.setItem("level",user.level||"");
+
+if(role==="admin")
+window.location="admin.html";
+else
+window.location="dashboard.html";
+
+}
+
+</script>
+
+</body>
+</html>
