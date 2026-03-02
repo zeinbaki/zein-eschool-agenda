@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Zein eSchool Agenda</title>
+<style>
+body{
+font-family:Arial;
+background:#f5f7fb;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+.box{
+background:white;
+padding:40px;
+border-radius:20px;
+width:350px;
+box-shadow:0 0 20px rgba(0,0,0,0.1);
+}
+input, select{
+width:100%;
+padding:12px;
+margin:10px 0;
+border-radius:10px;
+border:1px solid #ddd;
+}
+button{
+width:100%;
+padding:12px;
+background:#4a6cf7;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Zein eSchool Agenda</h2>
+
+<input id="username" placeholder="Enter Name">
+<input type="password" id="password" placeholder="Enter Password">
+
+<button onclick="login()">Login</button>
+</div>
+
+<script>
+
+function login(){
+
+let username = document.getElementById("username").value.trim();
+let password = document.getElementById("password").value.trim();
+
+if(username === "" || password === ""){
+alert("Fill all fields");
+return;
+}
+
+/* Detect Role */
+let role = "";
+
+if(password.startsWith("0") || password.startsWith("1"))
+role = "teacher";
+else if(password.startsWith("4") || password.startsWith("5"))
+role = "student";
+else if(password.startsWith("8") || password.startsWith("9"))
+role = "admin";
+else{
+alert("Password must start with 0/1 teacher, 4/5 student, 8/9 admin");
+return;
+}
+
+/* Load DB */
+let db = JSON.parse(localStorage.getItem("zeinDB") || "{}");
+
+/* First time setup */
+if(!db.users){
+
+db.users = [
+{username:"Teacher1",password:"012345",role:"teacher",level:"O"},
+{username:"Student1",password:"412345",role:"student",level:"A"},
+{username:"Admin",password:"812345",role:"admin"}
+];
+
+localStorage.setItem("zeinDB", JSON.stringify(db));
+}
+
+/* Validate */
+let user = db.users.find(u =>
+u.username === username &&
+u.password === password &&
+u.role === role
+);
+
+if(!user){
+alert("Login failed");
+return;
+}
+
+/* Save session */
+localStorage.setItem("username", user.username);
+localStorage.setItem("role", user.role);
+localStorage.setItem("level", user.level || "");
+
+if(user.role === "admin")
+window.location = "admin.html";
+else
+window.location = "dashboard.html";
+
+}
+
+</script>
+</body>
+</html>

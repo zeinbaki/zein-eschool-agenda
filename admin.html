@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+</head>
+<body style="font-family:Arial;background:#f5f7fb;padding:30px">
+
+<script>
+if(localStorage.getItem("role") !== "admin"){
+window.location="index.html";
+}
+</script>
+
+<h2>Admin Panel</h2>
+
+<button onclick="logout()">Logout</button>
+
+<hr>
+
+<h3>Add User</h3>
+
+<input id="newName" placeholder="Name">
+<input id="newPass" placeholder="Password">
+
+<select id="newRole">
+<option value="teacher">Teacher</option>
+<option value="student">Student</option>
+<option value="admin">Admin</option>
+</select>
+
+<select id="newLevel">
+<option value="">None</option>
+<option value="O">Level O</option>
+<option value="A">Level A</option>
+</select>
+
+<button onclick="addUser()">Add User</button>
+
+<hr>
+
+<h3>All Users</h3>
+<div id="userList"></div>
+
+<script>
+
+function getDB(){
+return JSON.parse(localStorage.getItem("zeinDB") || "{}");
+}
+
+function saveDB(db){
+localStorage.setItem("zeinDB", JSON.stringify(db));
+}
+
+function addUser(){
+
+let db = getDB();
+if(!db.users) db.users = [];
+
+db.users.push({
+username: newName.value.trim(),
+password: newPass.value.trim(),
+role: newRole.value,
+level: newLevel.value
+});
+
+saveDB(db);
+alert("User added");
+loadUsers();
+}
+
+function loadUsers(){
+
+let db = getDB();
+let html = "";
+
+db.users?.forEach(u=>{
+html += `
+<div style="background:white;padding:10px;margin:10px;border-radius:10px">
+${u.username} - ${u.role} ${u.level ? "- Level " + u.level : ""}
+</div>
+`;
+});
+
+document.getElementById("userList").innerHTML = html;
+}
+
+function logout(){
+localStorage.clear();
+window.location="index.html";
+}
+
+loadUsers();
+
+</script>
+</body>
+</html>

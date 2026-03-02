@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+</head>
+<body style="font-family:Arial;background:#f5f7fb;padding:30px">
+
+<script>
+if(!localStorage.getItem("username")){
+window.location="index.html";
+}
+</script>
+
+<h2>Zein eSchool Agenda</h2>
+
+<p><b>User:</b> <span id="user"></span></p>
+<p><b>Role:</b> <span id="role"></span></p>
+<p><b>Level:</b> <span id="level"></span></p>
+
+<button onclick="logout()">Logout</button>
+
+<hr>
+
+<div id="teacherSection" style="display:none;">
+<h3>Add Homework</h3>
+<input id="hwText" placeholder="Homework details">
+<button onclick="addHomework()">Add</button>
+</div>
+
+<h3>Homework List</h3>
+<div id="homeworkList"></div>
+
+<script>
+
+document.getElementById("user").innerText = localStorage.getItem("username");
+document.getElementById("role").innerText = localStorage.getItem("role");
+document.getElementById("level").innerText = localStorage.getItem("level");
+
+if(localStorage.getItem("role") === "teacher"){
+document.getElementById("teacherSection").style.display = "block";
+}
+
+function getDB(){
+return JSON.parse(localStorage.getItem("zeinDB") || "{}");
+}
+
+function saveDB(db){
+localStorage.setItem("zeinDB", JSON.stringify(db));
+}
+
+function addHomework(){
+
+let text = document.getElementById("hwText").value.trim();
+if(text === "") return;
+
+let db = getDB();
+if(!db.homework) db.homework = [];
+
+db.homework.push({
+teacher: localStorage.getItem("username"),
+details: text
+});
+
+saveDB(db);
+document.getElementById("hwText").value = "";
+loadHomework();
+}
+
+function loadHomework(){
+
+let db = getDB();
+let html = "";
+
+db.homework?.forEach(h=>{
+html += `
+<div style="background:white;padding:15px;margin:10px;border-radius:10px">
+<b>${h.teacher}</b><br>
+${h.details}
+</div>
+`;
+});
+
+document.getElementById("homeworkList").innerHTML = html;
+}
+
+function logout(){
+localStorage.clear();
+window.location="index.html";
+}
+
+loadHomework();
+
+</script>
+</body>
+</html>
